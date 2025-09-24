@@ -1,190 +1,224 @@
 # 🌾 Smart Farming Portal
-Smart Farming Portal: A full-stack web application built with Python and Supabase that allows farmers to digitally manage their crops, track farming activities, and view daily market prices and weather updates. Admins can update market data, and the system ensures each farmer’s data remains private and secure.
+
+**Smart Farming Portal** is a full-stack web application built with **Python and Supabase** that allows farmers to digitally manage crops, track farming activities, and view daily market prices and weather updates. Admins can update market data, and the system ensures each farmer’s data remains private and secure.
+
+---
 
 ## 🌱 Key Features
-1️⃣ User Management
 
-Farmer registration and login
+### 1️⃣ User Management
 
-Secure authentication
+* Farmer registration and login
+* Secure authentication
+* Each farmer can access only their own data
 
-Each farmer can access only their own data
+### 2️⃣ Crop Management
 
-2️⃣ Crop Management
+* Add, edit, and delete crop records
+* Track crop details: name, area, sowing date, fertilizer, expected yield
+* View crop history like a digital farming diary
 
-Add, edit, and delete crop records
+### 3️⃣ Market Prices
 
-Track crop details: crop name, area, sowing date, fertilizer, expected yield
+* Admin can update daily crop market prices
+* Farmers can view latest prices to make selling decisions
 
-View crop history like a digital farming diary
+### 4️⃣ Weather Updates
 
-3️⃣ Market Prices
+* Display daily temperature, humidity, and rainfall
+* Can use live weather API for real-time updates
+* Optional: store weather history for reports
 
-Admin can update daily crop market prices
+### 5️⃣ Reports & Insights
 
-Farmers can view latest prices to make selling decisions
+* Generate crop summary reports
+* Downloadable as CSV or PDF
+* Analyze trends: most planted crops, average yield
 
-4️⃣ Weather Updates
+### 6️⃣ Security & Access Control
 
-Display daily temperature, humidity, and rainfall
-
-Can use live weather API for real-time updates
-
-Optional: store weather history for reports
-
-5️⃣ Reports & Insights
-
-Generate crop summary reports
-
-Downloadable as CSV or PDF
-
-Analyze trends: most planted crops, average yield, etc.
-
-6️⃣ Security & Access Control
-
-Only authorized admins can update market prices
-
-Row-Level Security ensures farmers see only their crops
-
-## Technologies Used
-
-- **Backend:** Python (Flask or Django)  
-- **Frontend:** HTML, CSS, JavaScript  
-- **Database:** Supabase (PostgreSQL)  
-- **APIs:** OpenWeatherMap (optional for live weather updates)  
-- **Other Tools:** VS Code, Git, GitHub  
+* Only authorized admins can update market prices
+* Row-Level Security ensures farmers see only their crops
 
 ---
 
-## Technical Details
+## 🛠 Technologies Used
 
-- **Database Structure:**  
-  - `users` table: stores farmer/admin info  
-  - `crops` table: stores crop records linked to users  
-  - `market_prices` table: stores daily crop prices  
-  - Optional `weather` table for storing historical weather data  
-- **Authentication & Security:**  
-  - Passwords should be hashed before storing  
-  - Row-Level Security (RLS) ensures farmers access only their own crops  
-- **Admin Controls:**  
-  - Admins can add, edit, or delete market prices  
-  - Admin dashboard is protected via `is_admin` flag in the users table  
+* **Backend:** Python (Flask or Django)
+* **Frontend:** HTML, CSS, JavaScript
+* **Database:** Supabase (PostgreSQL)
+* **APIs:** OpenWeatherMap (optional for live weather updates)
+* **Other Tools:** VS Code, Git, GitHub
 
 ---
 
-## How to Use
+## ⚙ Technical Details
 
-### Farmer
-1. Register or log in as a farmer  
-2. Add crop details: crop name, area, sowing date, fertilizer, expected yield  
-3. View your crop records in the dashboard  
-4. Check daily market prices and weather updates  
-5. Generate reports for analysis (CSV or PDF)  
+* **Database Structure:**
 
-### Admin
-1. Log in as an admin (is_admin = TRUE)  
-2. Add or update daily market prices  
-3. View all farmers’ crop records (optional)  
-4. Manage reports or data updates  
+  * `users` table: stores farmer/admin info
+  * `crops` table: stores crop records linked to users
+  * `market_prices` table: stores daily crop prices
+  * Optional `weather` table for storing historical weather data
 
-# Project Structure
+* **Authentication & Security:**
 
+  * Passwords should be hashed before storing
+  * Row-Level Security (RLS) ensures farmers access only their own crops
+
+* **Admin Controls:**
+
+  * Admins can add, edit, or delete market prices
+  * Admin dashboard is protected via `is_admin` flag in the users table
+
+---
+
+## 📂 Project Structure
+
+```
 Python_FullStackProject/
-|
-|--src/                     # Core apllication logic
-|   |---logic.py            #Apllication logic and task
-operations
-|   |--db.pyn               #Database Operations
-|
-|--API/                    #Backend API
-|   |--main.py             #Fast API end points
-|
-|--Frontend/               #Frontend web application
-|   |--app.py              #Streamlit web interface
-|
-|--requirements.txt        #Python Dependencies
-|
-|--Readme.md               #Project Documentation
-|
-|.env                      #Python Environmet Variables
+├── src/                 # Core application logic
+│   ├── logic.py         # Application logic and task operations
+│   └── db.py            # Database operations (CRUD with Supabase/Postgres)
+├── API/                 # Backend API
+│   └── main.py          # FastAPI endpoints
+├── Frontend/            # Frontend web application
+│   └── app.py           # Streamlit web interface
+├── requirements.txt     # Python dependencies
+├── README.md            # Project documentation
+└── .env                 # Environment variables (API keys, database URL, secrets)
+```
 
-# Quick Start
-  ## Prerequisites
-   -python 3.8 or higher
-   -A Supabase account
+---
 
-   # 1.Clone or Download the project
-    ## 1.Clone with git
-       git clone https://github.com/Anusreereddysama/Python_FullStackProject.git
-    ## 2.Download a zip file
-   # 2.Create & activate virtual environment:
-      python3 -m venv venv
-      source venv/bin/activate
-   # 3.Install Dependencies
-    -install al required packages with this command
-      pip install -r requirements.txt
-    
-   # 4.Setup Database tables in supabase(users(farmers and admins),crops,market_prices,weather)
-    Run this SQL commands in Supabase SQL editor
-    # USER TABLE 
-       create table users (
-        id uuid primary key default uuid_generate_v4(), 
-        name text not null,
-        phone text unique not null,
-        password text not null, 
-        is_admin BOOLEAN DEFAULT FALSE,
-        created_at timestamp default now()
-        );
+## Quick Start
 
-    # CROPS TABLE
-      create table crops (
-        id uuid primary key default uuid_generate_v4(),
-        user_id uuid references users(id) on delete cascade, 
-        crop_name text not null,
-        area numeric,
-        sow_date date,
-        fertilizer text,
-        expected_yield numeric,
-        created_at timestamp default now()
-        );
+### Prerequisites
 
-    #MARKET_PRICES TABLE
-       create table market_prices (
-        id uuid primary key default uuid_generate_v4(),
-        crop_name text not null,
-        date date not null,
-        price_per_kg numeric not null
-        );
+* Python 3.8 or higher
+* Supabase account
 
-    #WEATHER TABLE
-       create table weather (
-        id uuid primary key default uuid_generate_v4(),
-        date date not null,
-        temperature text,
-        rainfall text,
-        humidity text,
-        created_at timestamp default now()
-        );
-   
-   # Run the Application
-     #FastAPI backend
-       cd API
-       python main.py
-       The API will available at 'http://localhost:8080'
+### 1️⃣ Clone the Project
 
-   # Common Issues
-     code command not found: Install VS Code command in PATH via Cmd + Shift + P → Shell Command: Install 'code' command in PATH.
-     Database connection errors: Ensure Supabase URL and API key are correct.
-     Password issues: Use hashed passwords when storing in DB.
-     API errors (Weather/Market): Verify internet connection and API key validity.
+```bash
+# Clone with git
+git clone https://github.com/Anusreereddysama/Python_FullStackProject.git
+cd Python_FullStackProject
 
-   # Future Enhancements
+# OR download ZIP and extract
+```
 
-     AI Crop Health Monitoring (image-based disease detection)
-     IoT sensor integration for real-time soil and weather data
-     Automated Market Price Updates via scraping or API
-     Mobile application version for field access
-     Multi-language support for regional farmers
-   # Support 
-     For questions, bug reports, or feature requests:
-     Your Name – anusreereddysama@gmail.com
+### 2️⃣ Create & Activate Virtual Environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3️⃣ Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4️⃣ Setup Database Tables in Supabase
+
+#### Users Table
+
+```sql
+CREATE TABLE users (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name text NOT NULL,
+    phone text UNIQUE NOT NULL,
+    password text NOT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at timestamp DEFAULT now()
+);
+```
+
+#### Crops Table
+
+```sql
+CREATE TABLE crops (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+    crop_name text NOT NULL,
+    area numeric,
+    sow_date date,
+    fertilizer text,
+    expected_yield numeric,
+    created_at timestamp DEFAULT now()
+);
+```
+
+#### Market Prices Table
+
+```sql
+CREATE TABLE market_prices (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    crop_name text NOT NULL,
+    date date NOT NULL,
+    price_per_kg numeric NOT NULL
+);
+```
+
+#### Weather Table (Optional)
+
+```sql
+CREATE TABLE weather (
+    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    date date NOT NULL,
+    temperature text,
+    rainfall text,
+    humidity text,
+    created_at timestamp DEFAULT now()
+);
+```
+
+### 5️⃣ Run the Application
+
+#### FastAPI Backend
+
+```bash
+cd API
+python main.py
+```
+
+* API will be available at: `http://localhost:8080`
+
+#### Streamlit Frontend
+
+```bash
+cd Frontend
+streamlit run app.py
+```
+
+---
+
+## ⚠️ Common Issues
+
+* `code` command not found → Install VS Code command in PATH: `Cmd + Shift + P → Shell Command: Install 'code' command in PATH`
+* Database connection errors → Ensure Supabase URL and API key are correct
+* Password issues → Use hashed passwords when storing in DB
+* API errors (Weather/Market) → Verify internet connection and API key validity
+
+---
+
+## Future Enhancements
+
+* AI Crop Health Monitoring (image-based disease detection)
+* IoT sensor integration for real-time soil and weather data
+* Automated Market Price Updates via scraping or API
+* Mobile application version for field access
+* Multi-language support for regional farmers
+
+---
+
+## 🆘 Support
+
+For questions, bug reports, or feature requests:
+
+**Anusree S** – [anusreereddysama@gmail.com](mailto:anusreereddysama@gmail.com)
+
+```
+```
