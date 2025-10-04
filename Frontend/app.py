@@ -16,11 +16,14 @@ st.set_page_config(
 BRAND_NAME = "Smart Farming Portal"
 PRIMARY_COLOR = "#1B5E20"
 ACCENT_COLOR = "#2E7D32"
-LIGHT_BG = "#F6FFF6"
+LIGHT_BG = "#000000"
 
 st.markdown(
     f"""
     <style>
+        .stApp {{
+            background-color: {LIGHT_BG} !important;
+        }}
         .app-header {{
             background: linear-gradient(90deg, {PRIMARY_COLOR}, {ACCENT_COLOR});
             color: #ffffff;
@@ -35,15 +38,141 @@ st.markdown(
             margin-top: 28px;
         }}
         .kpi-card {{
-            background: {LIGHT_BG};
-            border: 1px solid #e6f2e6;
+            background: #1a1a1a;
+            border: 1px solid #333333;
             padding: 16px;
             border-radius: 8px;
+            color: #ffffff;
         }}
         .stButton>button {{
             background-color: {ACCENT_COLOR} !important;
             color: white !important;
             border: 0 !important;
+        }}
+        
+        /* Form styling improvements - ALL inputs black */
+        .stTextInput>div>div>input, 
+        .stTextArea>div>div>textarea,
+        .stSelectbox>div>div>div,
+        .stDateInput>div>div>input,
+        .stTimeInput>div>div>input,
+        .stNumberInput>div>div>input,
+        .stFileUploader>div>div>button,
+        .stColorPicker>div>div>div,
+        .stSlider>div>div>div,
+        .stRadio>div>label,
+        .stMultiSelect>div>div>div {{
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: 2px solid #333333 !important;
+            border-radius: 8px !important;
+        }}
+        .stTextInput>div>div>input:focus,
+        .stTextArea>div>div>textarea:focus,
+        .stSelectbox>div>div>div:focus,
+        .stDateInput>div>div>input:focus,
+        .stTimeInput>div>div>input:focus,
+        .stNumberInput>div>div>input:focus {{
+            border-color: {ACCENT_COLOR} !important;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.4) !important;
+        }}
+        .stTextInput>div>div>input::placeholder,
+        .stTextArea>div>div>textarea::placeholder {{
+            color: #888888 !important;
+        }}
+        
+        /* Make ALL text labels visible and white on black background */
+        .stTextInput label, .stCheckbox label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stNumberInput label, .stTextArea label, .stFileUploader label, .stColorPicker label, .stSlider label, .stRadio label, .stMultiSelect label {{
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }}
+        
+        /* Section headers styling - white text */
+        .form-container p, .form-container strong, .form-container b {{
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }}
+        
+        /* Make all Streamlit text white */
+        .stMarkdown, .stText, .stWrite, .stInfo, .stSuccess, .stError, .stWarning {{
+            color: #ffffff !important;
+        }}
+        
+        /* Sidebar styling for black theme */
+        .css-1d391kg {{
+            background-color: #1a1a1a !important;
+        }}
+        
+        /* Main content area */
+        .main .block-container {{
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }}
+        
+        /* Checkbox styling - black theme */
+        .stCheckbox>div>div>div {{
+            background-color: #000000 !important;
+            border: 2px solid #333333 !important;
+        }}
+        .stCheckbox>div>div>div:checked {{
+            background-color: {ACCENT_COLOR} !important;
+            border-color: {ACCENT_COLOR} !important;
+        }}
+        
+        /* Hide duplicate icons */
+        .stTextInput>div>div>div>div {{
+            display: none !important;
+        }}
+        
+        /* Remove extra spacing */
+        .stApp > div:first-child {{
+            padding-top: 0 !important;
+        }}
+        
+        /* Page headers - compact with black theme */
+        .page-header {{
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid {ACCENT_COLOR};
+        }}
+        .page-header h1 {{
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }}
+        .page-header p {{
+            color: #cccccc;
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }}
+        
+        /* Form container - dark theme with no top padding */
+        .form-container {{
+            background: #1a1a1a;
+            padding: 0px 30px 30px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+            border: 1px solid #333333;
+        }}
+        
+        /* Section headers - remove top margin with black theme */
+        .section-header {{
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333333;
+        }}
+        
+        /* Remove extra spacing from form elements */
+        .form-container > div:first-child {{
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }}
     </style>
     """,
@@ -60,7 +189,7 @@ if 'logged_in' not in st.session_state:
 if 'user' not in st.session_state:
     st.session_state.user = None
 if 'active_page' not in st.session_state:
-    st.session_state.active_page = "Home"
+    st.session_state.active_page = "Login"
 
 # -------------------------
 # API Helpers
@@ -121,11 +250,103 @@ def register(name, phone, password, is_admin=False):
 def logout():
     st.session_state.logged_in = False
     st.session_state.user = None
-    st.session_state.active_page = "Home"
+    st.session_state.active_page = "Login"
 
 # -------------------------
 # Pages
 # -------------------------
+def page_login():
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        
+        st.markdown('<div class="section-header">Sign In to Your Account</div>', unsafe_allow_html=True)
+        
+        phone = st.text_input("Phone Number", placeholder="Enter your phone number", help="Enter the phone number you used to register")
+        password = st.text_input("Password", type="password", placeholder="Enter your password", help="Enter your account password")
+        
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            if st.button("Login", type="primary", use_container_width=True):
+                if phone and password:
+                    if login(phone, password):
+                        st.success("Welcome back!")
+                        # Redirect to appropriate page based on role
+                        if st.session_state.user.get('is_admin'):
+                            st.session_state.active_page = "Buyer Dashboard"
+                        else:
+                            st.session_state.active_page = "Farmer Dashboard"
+                        st.rerun()
+                else:
+                    st.error("Please enter both phone and password")
+        
+        with col_btn2:
+            if st.button("Go to Register", use_container_width=True):
+                st.session_state.active_page = "Register"
+                st.rerun()
+        
+        st.markdown("**Don't have an account?** Click 'Go to Register' above to create a new account.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
+def page_register():
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        
+        st.markdown('<div class="section-header">Sign Up for Smart Farming Portal</div>', unsafe_allow_html=True)
+        
+        # Personal Information Section
+        st.markdown("**Personal Information**")
+        name = st.text_input("Full Name", placeholder="Enter your full name", help="Enter your complete name as it should appear on your account")
+        phone = st.text_input("Phone Number", placeholder="Enter your phone number", help="This will be used for login and notifications")
+        
+        # Security Section
+        st.markdown("**Account Security**")
+        password = st.text_input("Password", type="password", placeholder="Create a strong password", help="Choose a secure password with at least 6 characters")
+        confirm_password = st.text_input("Confirm Password", type="password", placeholder="Confirm your password", help="Re-enter your password to confirm")
+        
+        # Role Selection Section
+        st.markdown("**Account Type**")
+        is_admin = st.checkbox(
+            "Register as Buyer (Admin)", 
+            help="Check this if you want to post market prices and manage buying activities. Leave unchecked if you're a farmer.",
+            value=False
+        )
+        
+        if is_admin:
+            st.info("**Buyer Account**: You'll be able to post market prices, view negotiations, and manage buying activities.")
+        else:
+            st.info("**Farmer Account**: You'll be able to manage crops, view market prices, and participate in negotiations.")
+        
+        # Action Buttons
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            if st.button("Create Account", type="primary", use_container_width=True):
+                if name and phone and password and confirm_password:
+                    if password == confirm_password:
+                        if register(name, phone, password, is_admin):
+                            st.success("Account created successfully!")
+                            # Redirect to appropriate page based on role
+                            if st.session_state.user.get('is_admin'):
+                                st.session_state.active_page = "Buyer Dashboard"
+                            else:
+                                st.session_state.active_page = "Farmer Dashboard"
+                            st.rerun()
+                    else:
+                        st.error("Passwords do not match")
+                else:
+                    st.error("Please fill in all fields")
+        
+        with col_btn2:
+            if st.button("Back to Login", use_container_width=True):
+                st.session_state.active_page = "Login"
+                st.rerun()
+        
+        st.markdown("**Already have an account?** Click 'Back to Login' above to sign in.")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+
 def page_home():
     left, right = st.columns([2, 1])
     with left:
@@ -148,6 +369,126 @@ def page_home():
         if st.button("Weather"):
             st.session_state.active_page = "Weather"
         st.markdown("</div>", unsafe_allow_html=True)
+
+def page_farmer_dashboard():
+    st.subheader("Farmer Dashboard")
+    if not st.session_state.logged_in:
+        st.info("Please login to access your dashboard.")
+        return
+    
+    name = st.session_state.user.get('name', 'Farmer')
+    st.write(f"Welcome, {name}! Manage your farming activities.")
+    
+    user_id = st.session_state.user.get('id')
+    
+    # Get actual data
+    crops = api_get(f"/crops/{user_id}")
+    market_prices = api_get("/market_prices")
+    weather = api_get("/weather")
+    
+    # Calculate actual counts
+    crop_count = len(crops.get('data', [])) if crops.get('success') else 0
+    market_count = len(market_prices.get('data', [])) if market_prices.get('success') else 0
+    weather_count = len(weather.get('data', [])) if weather.get('success') else 0
+    
+    # Quick stats with real data
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("My Crops", crop_count, f"{crop_count} total")
+    with col2:
+        st.metric("Market Prices", market_count, f"{market_count} available")
+    with col3:
+        st.metric("Weather Records", weather_count, f"{weather_count} entries")
+    with col4:
+        st.metric("Account Status", "Active", "✓")
+    
+    st.divider()
+    
+    # Navigation to specific pages
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🌾 Manage Crops", use_container_width=True):
+            st.session_state.active_page = "My Crops"
+            st.rerun()
+    with col2:
+        if st.button("💰 Market Prices", use_container_width=True):
+            st.session_state.active_page = "Market Prices"
+            st.rerun()
+    with col3:
+        if st.button("🌤️ Weather", use_container_width=True):
+            st.session_state.active_page = "Weather"
+            st.rerun()
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("👤 Account", use_container_width=True):
+            st.session_state.active_page = "Account"
+            st.rerun()
+    with col2:
+        if st.button("🏠 Home", use_container_width=True):
+            st.session_state.active_page = "Home"
+            st.rerun()
+    with col3:
+        st.empty()  # Empty column for spacing
+
+def page_buyer_dashboard():
+    st.subheader("Buyer Dashboard")
+    if not st.session_state.logged_in:
+        st.info("Please login to access your dashboard.")
+        return
+    
+    name = st.session_state.user.get('name', 'Buyer')
+    st.write(f"Welcome, {name}! Manage your buying activities.")
+    
+    user_id = st.session_state.user.get('id')
+    
+    # Get actual data
+    market_prices = api_get("/market_prices")
+    weather = api_get("/weather")
+    users = api_get("/users")
+    
+    # Calculate actual counts
+    market_count = len(market_prices.get('data', [])) if market_prices.get('success') else 0
+    weather_count = len(weather.get('data', [])) if weather.get('success') else 0
+    farmer_count = len([u for u in users.get('data', []) if not u.get('is_admin')]) if users.get('success') else 0
+    
+    # Quick stats with real data
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Posted Prices", market_count, f"{market_count} total")
+    with col2:
+        st.metric("Weather Records", weather_count, f"{weather_count} entries")
+    with col3:
+        st.metric("Total Farmers", farmer_count, f"{farmer_count} registered")
+    with col4:
+        st.metric("Account Status", "Active", "✓")
+    
+    st.divider()
+    
+    # Navigation to specific pages
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("💰 Post Market Prices", use_container_width=True):
+            st.session_state.active_page = "Market Prices"
+            st.rerun()
+    with col2:
+        if st.button("🌤️ Weather", use_container_width=True):
+            st.session_state.active_page = "Weather"
+            st.rerun()
+    with col3:
+        if st.button("👤 Account", use_container_width=True):
+            st.session_state.active_page = "Account"
+            st.rerun()
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🏠 Home", use_container_width=True):
+            st.session_state.active_page = "Home"
+            st.rerun()
+    with col2:
+        st.empty()  # Empty column for spacing
+    with col3:
+        st.empty()  # Empty column for spacing
 
 def page_crops():
     st.subheader("My Crops")
@@ -336,57 +677,62 @@ def page_negotiations():
 # Sidebar Navigation & Auth UI
 # -------------------------
 with st.sidebar:
-    st.markdown("### Navigation")
-    pages = ["Home", "Crops", "Market", "Weather"]
-    if st.session_state.logged_in and st.session_state.user and st.session_state.user.get('is_admin'):
-        pages.append("Buyer")
-    pages.append("Negotiations")
-    pages.append("Account")
-    st.session_state.active_page = st.selectbox("Go to", pages, index=pages.index(st.session_state.active_page) if st.session_state.active_page in pages else 0)
-
-    st.divider()
     if not st.session_state.logged_in:
-        st.markdown("### Account")
-        tab_login, tab_register = st.tabs(["Login", "Register"])
-        with tab_login:
-            phone = st.text_input("Phone", key="login_phone")
-            password = st.text_input("Password", type="password", key="login_password")
-            if st.button("Login"):
-                if login(phone, password):
-                    st.success("Welcome back!")
-                    # redirect to role page
-                    if st.session_state.user.get('is_admin'):
-                        st.session_state.active_page = "Buyer"
-                    else:
-                        st.session_state.active_page = "Crops"
-                    st.rerun()
-        with tab_register:
-            name = st.text_input("Name", key="reg_name")
-            phone_r = st.text_input("Phone", key="reg_phone")
-            pwd_r = st.text_input("Password", type="password", key="reg_password")
-            is_admin = st.checkbox("Register as Buyer", key="reg_is_admin")
-            if st.button("Create Account"):
-                if register(name, phone_r, pwd_r, is_admin):
-                    # redirect to role page
-                    if st.session_state.user and st.session_state.user.get('is_admin'):
-                        st.session_state.active_page = "Buyer"
-                    else:
-                        st.session_state.active_page = "Crops"
-                    st.rerun()
+        st.markdown("### Welcome to Smart Farming Portal")
+        st.markdown("Please login or register to access the platform.")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Login", use_container_width=True):
+                st.session_state.active_page = "Login"
+                st.rerun()
+        with col2:
+            if st.button("Register", use_container_width=True):
+                st.session_state.active_page = "Register"
+                st.rerun()
+    else:
+        st.markdown("### Navigation")
+        user = st.session_state.user
+        if user.get('is_admin'):
+            # Buyer navigation
+            pages = ["Buyer Dashboard", "Market Prices", "Weather", "Account", "Home"]
+        else:
+            # Farmer navigation
+            pages = ["Farmer Dashboard", "My Crops", "Market Prices", "Weather", "Account", "Home"]
+        
+        st.session_state.active_page = st.selectbox("Go to", pages, index=pages.index(st.session_state.active_page) if st.session_state.active_page in pages else 0)
+        
+        st.divider()
+        st.markdown(f"**Welcome, {user.get('name', 'User')}**")
+        st.markdown(f"Role: {'Buyer' if user.get('is_admin') else 'Farmer'}")
+        
+        if st.button("Logout", type="secondary"):
+            logout()
+            st.success("Logged out successfully!")
+            st.rerun()
 
 # -------------------------
 # Router
 # -------------------------
 page_map = {
+    "Login": page_login,
+    "Register": page_register,
     "Home": page_home,
-    "Crops": page_crops,
-    "Market": page_market,
+    "Farmer Dashboard": page_farmer_dashboard,
+    "Buyer Dashboard": page_buyer_dashboard,
+    "My Crops": page_crops,
+    "Market Prices": page_market,
     "Weather": page_weather,
-    "Buyer": page_buyer,
-    "Negotiations": page_negotiations,
     "Account": page_account,
+    "Buyer": page_buyer,  # Keep for backward compatibility
+    "Crops": page_crops,  # Keep for backward compatibility
+    "Market": page_market,  # Keep for backward compatibility
 }
 
-page_map.get(st.session_state.active_page, page_home)()
+# Default to login if not logged in and not on login/register pages
+if not st.session_state.logged_in and st.session_state.active_page not in ["Login", "Register", "Home"]:
+    st.session_state.active_page = "Login"
+
+page_map.get(st.session_state.active_page, page_login)()
 
 st.markdown("<div class='app-footer'>© 2025 Smart Farming Portal. All rights reserved.</div>", unsafe_allow_html=True)
